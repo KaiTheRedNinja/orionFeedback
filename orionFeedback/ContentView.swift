@@ -79,6 +79,17 @@ struct ContentView: View {
                         Spacer().frame(width: 20)
                         Image(systemName: "bubble.left")
                         Text(String(discussion.commentCount))
+                        Spacer().frame(width: 20)
+
+                        ForEach(discussion.tags) { tag in
+                            Text(tag.description)
+                                .padding(3)
+                                .background {
+                                    Color.accentColor
+                                        .opacity(0.3)
+                                        .cornerRadius(5)
+                                }
+                        }
                     }
                 }
                 Spacer()
