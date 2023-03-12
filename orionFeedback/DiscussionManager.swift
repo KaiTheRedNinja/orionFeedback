@@ -8,8 +8,10 @@
 import Foundation
 
 class DiscussionManager: ObservableObject {
+    /// The default instance
     static var `default`: DiscussionManager = .init()
 
+    /// An array of the loaded discussions
     @Published
     var discussions: [Discussion] = []
 
@@ -27,6 +29,7 @@ class DiscussionManager: ObservableObject {
 
     private init() {}
 
+    /// Loads a given page
     func loadPage(page: Int) {
         let url = URL(string: "https://orionfeedback.org/api/discussions?page%5Boffset%5D=\(page*pageSize)")!
         var request = URLRequest(url: url)
@@ -48,6 +51,7 @@ class DiscussionManager: ObservableObject {
         task.resume()
     }
 
+    /// Parses the JSON provided by the API into an array of discussions
     func parseResults(jsonData: Data) -> [Discussion] {
         guard let json = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] else {
             print("json data malformed")
@@ -71,7 +75,6 @@ class DiscussionManager: ObservableObject {
             guard let newDiscussion = parseDiscussion(json: discussion) else { continue }
             discussions.append(newDiscussion)
         }
-        print("New discussions count: \(discussions)")
         return discussions
     }
 
@@ -91,6 +94,7 @@ class DiscussionManager: ObservableObject {
      data/commentCount is the number of comments
      data/customMeta/description is the subheadline
      */
+    /// Parses a single discussion
     func parseDiscussion(json: [String: Any]) -> Discussion? {
         // get the components of the data
         guard let idString = json["id"] as? String,
@@ -126,10 +130,7 @@ class DiscussionManager: ObservableObject {
               let votes = attributes["votes"] as? Int,
               let commentCount = attributes["commentCount"] as? Int,
               let customMeta = attributes["customMeta"] as? [String: String]
-        else {
-            print("Could not get other attributes")
-            return nil
-        }
+        else { return nil }
 
         return .init(id: id,
                      tags: tags,

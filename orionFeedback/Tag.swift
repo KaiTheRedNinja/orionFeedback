@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// A struct representing a tag
 struct Tag: Identifiable {
     /// Possible values (non-exhaustive list):
     /// - `3`: Feature suggestion
@@ -18,6 +19,7 @@ struct Tag: Identifiable {
     ///     - `6`: Extension bugs
     var id: Int
 
+    /// A string description of the tag
     var description: String {
         switch id {
         case 3: return "Feature suggestion"
