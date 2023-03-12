@@ -13,7 +13,7 @@ class DiscussionManager: ObservableObject {
 
     /// An array of the loaded discussions
     @Published
-    var discussions: [Discussion] = []
+    var discussions: [Int: Discussion] = [:]
 
     /// The number of discussions per page
     @Published
@@ -31,7 +31,8 @@ class DiscussionManager: ObservableObject {
 
     /// Loads a given page
     func loadPage(page: Int) {
-        let url = URL(string: "https://orionfeedback.org/api/discussions?page%5Boffset%5D=\(page*pageSize)")!
+        let offset = page*pageSize
+        let url = URL(string: "https://orionfeedback.org/api/discussions?page%5Boffset%5D=\(offset)")!
         var request = URLRequest(url: url)
         request.setValue("done", forHTTPHeaderField: "secondaryTag")
 
@@ -44,7 +45,9 @@ class DiscussionManager: ObservableObject {
             guard let data, let results = self?.parseResults(jsonData: data) else { return }
 
             DispatchQueue.main.async {
-                self?.discussions.append(contentsOf: results)
+                for (index, result) in results.enumerated() {
+                    self?.discussions[offset+index] = result
+                }
             }
         }
 

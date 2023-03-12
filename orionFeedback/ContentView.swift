@@ -16,7 +16,7 @@ struct ContentView: View {
 
     var body: some View {
         ScrollView {
-            if (page*manager.pageSize) >= manager.discussions.count {
+            if manager.discussions[page*manager.pageSize] == nil {
                 VStack {
                     Spacer()
                     HStack {
@@ -29,7 +29,7 @@ struct ContentView: View {
             }
             VStack {
                 ForEach(0..<20, id: \.self) { index in
-                    if (page*manager.pageSize + index) < manager.discussions.count {
+                    if manager.discussions[page*manager.pageSize + index] != nil {
                         groupBoxFor(index: index)
                     }
                 }
@@ -41,14 +41,14 @@ struct ContentView: View {
                     }
 
                     ForEach([-2, -1, 0, 1, 2], id: \.self) { offset in
-                        if page+offset >= 0 && page+offset < manager.totalPages-1 {
+                        if page+offset >= 0 && page+offset < manager.totalPages {
                             buttonFor(pageNumber: page+offset)
                         }
                     }
 
                     if manager.totalPages-1 - 3 > page {
-                        buttonFor(pageNumber: manager.totalPages-1)
                         Text("...")
+                        buttonFor(pageNumber: manager.totalPages-1)
                     }
                 }
             }
@@ -64,7 +64,7 @@ struct ContentView: View {
 
     @ViewBuilder
     func groupBoxFor(index: Int) -> some View {
-        let discussion = manager.discussions[page*manager.pageSize + index]
+        let discussion = manager.discussions[page*manager.pageSize + index]!
         GroupBox {
             HStack {
                 VStack(alignment: .leading) {
